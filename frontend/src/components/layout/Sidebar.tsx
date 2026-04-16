@@ -1,0 +1,280 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Home,
+  Briefcase,
+  Lightbulb,
+  FileText,
+  Users2,
+  BookOpen,
+  Award,
+  Moon,
+  Sun,
+  X,
+} from "lucide-react";
+import { site, navLinks } from "@/data/site";
+import { LinkedinIcon, GithubIcon, ScholarIcon, OrcidIcon, ResearchGateIcon } from "./brand-icons";
+import { resolveStrapiMediaUrl } from "@/lib/strapi";
+import type { StrapiSiteConfig } from "@/types/strapi";
+
+interface SidebarProps {
+  /** Live site config from Strapi. Falls back to static data when undefined. */
+  siteConfig?: StrapiSiteConfig | null;
+}
+
+const iconMap: Record<string, typeof Home> = {
+  "/": Home,
+  "/experiences": Briefcase,
+  "/research": Lightbulb,
+  "/projects": Award,
+  "/publications": FileText,
+  "/services": Users2,
+  "/teaching": BookOpen,
+};
+
+const normalizePath = (path: string): string => {
+  if (!path) return "/";
+  if (path.length > 1 && path.endsWith("/")) return path.slice(0, -1);
+  return path;
+};
+
+export default function Sidebar({ siteConfig }: SidebarProps = {}) {
+  // Merge live data with static fallbacks
+  const name = siteConfig?.name ?? site.name;
+  const shortName = siteConfig?.shortName ?? site.shortName;
+  const title = siteConfig?.title ?? site.title;
+  const institution = siteConfig?.institution ?? site.institution;
+  const department = siteConfig?.department ?? site.department;
+  const email = siteConfig?.email ?? site.email;
+  const phone = siteConfig?.phone ?? site.phone;
+  const location = siteConfig?.location ?? site.location;
+  const linkedinUrl = siteConfig?.linkedinUrl ?? site.socials.linkedin;
+  const scholarUrl = siteConfig?.scholarUrl ?? site.socials.scholar;
+  const githubUrl = siteConfig?.githubUrl ?? site.socials.github;
+  const orcidUrl = siteConfig?.orcidUrl ?? site.socials.orcid;
+  const researchGateUrl = siteConfig?.researchGateUrl ?? site.socials.researchGate;
+
+  // Prefer a medium/small variant when available — it's ~150px wide, which is
+  // what the 144×144 avatar slot actually renders. Falls back to the static
+  // local asset when no upload exists in Strapi.
+  const uploadedVariant =
+    siteConfig?.profileImage?.formats?.small ??
+    siteConfig?.profileImage?.formats?.medium ??
+    siteConfig?.profileImage?.formats?.thumbnail;
+  const uploadedUrl =
+    resolveStrapiMediaUrl(uploadedVariant?.url ?? siteConfig?.profileImage);
+  const profileSrc = uploadedUrl ?? "/images/profile.webp";
+  const profileAlt = siteConfig?.profileImage?.alternativeText ?? `${shortName} profile`;
+
+  const socialLinks = [
+    { href: linkedinUrl, label: "LinkedIn", Icon: LinkedinIcon },
+    { href: scholarUrl, label: "Google Scholar", Icon: ScholarIcon },
+    { href: githubUrl, label: "GitHub", Icon: GithubIcon },
+    ...(orcidUrl ? [{ href: orcidUrl, label: "ORCID", Icon: OrcidIcon }] : []),
+    ...(researchGateUrl
+      ? [{ href: researchGateUrl, label: "ResearchGate", Icon: ResearchGateIcon }]
+      : []),
+  ] as const;
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+  const activePath = normalizePath(pathname);
+
+  // Sync initial dark mode state.
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains("dark"));
+
+    const handleToggle = () => setOpen((prev) => !prev);
+    window.addEventListener("sidebar:toggle", handleToggle);
+    return () => window.removeEventListener("sidebar:toggle", handleToggle);
+  }, []);
+
+  // Close mobile drawer on navigation.
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  // Lock body scroll while mobile drawer is open.
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [open]);
+
+  const closeSidebar = useCallback(() => setOpen(false), []);
+
+  const toggleTheme = useCallback(() => {
+    const root = document.documentElement;
+    const next = !root.classList.contains("dark");
+    root.classList.toggle("dark", next);
+    try {
+      localStorage.setItem("theme", next ? "dark" : "light");
+    } catch {
+      /* */
+    }
+    setIsDark(next);
+  }, []);
+
+  return (
+    <>
+      {/* Mobile backdrop */}
+      <div
+        onClick={closeSidebar}
+        aria-hidden={!open}
+        className={`fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-sm transition-opacity lg:hidden ${
+          open ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      />
+
+      <aside
+        id="sidebar"
+        aria-label="Primary navigation"
+        className={`sidebar-scroll fixed inset-y-0 left-0 z-50 flex w-80 max-w-[85vw] flex-col overflow-y-auto border-r border-slate-200 bg-white shadow-xl transition-transform duration-300 lg:translate-x-0 dark:border-slate-800 dark:bg-slate-950 ${
+          open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        }`}
+      >
+        <button
+          type="button"
+          onClick={closeSidebar}
+          aria-label="Close navigation"
+          className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 lg:hidden dark:text-slate-400 dark:hover:bg-slate-800"
+        >
+          <X className="h-5 w-5" />
+        </button>
+
+        <div className="flex flex-col gap-6 p-6">
+          {/* Profile */}
+          <div className="flex flex-col items-center text-center">
+            <div className="relative">
+              <div className="h-36 w-36 overflow-hidden rounded-full ring-4 ring-emerald-500/20">
+                <Image
+                  src={profileSrc}
+                  alt={profileAlt}
+                  width={144}
+                  height={144}
+                  priority
+                  unoptimized={uploadedUrl !== null}
+                  className="h-full w-full object-cover object-center"
+                />
+              </div>
+            </div>
+            <h1 className="mt-4 text-xl font-bold text-slate-900 dark:text-slate-50">
+              {name}
+            </h1>
+            <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
+              {title}
+            </p>
+            <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+              {institution}
+            </p>
+            {department && (
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                {department}
+              </p>
+            )}
+          </div>
+
+          {/* Contact */}
+          <div className="space-y-2.5 text-sm text-slate-600 dark:text-slate-300">
+            <a
+              href={`mailto:${email}`}
+              className="flex items-start gap-3 hover:text-emerald-600 dark:hover:text-emerald-400"
+            >
+              <Mail className="mt-0.5 h-4 w-4 shrink-0" />
+              <span className="break-all">{email}</span>
+            </a>
+            {phone && (
+              <a
+                href={`tel:${phone.replace(/\s/g, "")}`}
+                className="flex items-start gap-3 hover:text-emerald-600 dark:hover:text-emerald-400"
+              >
+                <Phone className="mt-0.5 h-4 w-4 shrink-0" />
+                <span>{phone}</span>
+              </a>
+            )}
+            {location && (
+              <div className="flex items-start gap-3">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
+                <span>{location}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Social */}
+          <div className="flex items-center justify-center gap-2">
+            {socialLinks.map(({ href, label, Icon }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 hover:border-emerald-500 hover:text-emerald-600 dark:border-slate-800 dark:text-slate-300 dark:hover:border-emerald-400 dark:hover:text-emerald-400"
+              >
+                <Icon className="h-4 w-4" />
+              </a>
+            ))}
+          </div>
+
+          <div className="divider" />
+
+          {/* Nav */}
+          <nav className="flex flex-col gap-1">
+            {navLinks.map((link) => {
+              const Icon = iconMap[link.href] ?? Home;
+              const isActive = activePath === normalizePath(link.href);
+              return (
+                <Link
+                  key={link.title}
+                  href={link.href}
+                  onClick={closeSidebar}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors ${
+                    isActive
+                      ? "bg-emerald-600 text-white shadow-sm shadow-emerald-600/20"
+                      : "text-slate-700 hover:bg-emerald-50 hover:text-emerald-700 dark:text-slate-300 dark:hover:bg-emerald-950/40 dark:hover:text-emerald-300"
+                  }`}
+                >
+                  <Icon className="h-4 w-4 shrink-0" />
+                  <span>{link.title}</span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="divider" />
+
+          {/* Theme toggle */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800 cursor-pointer"
+          >
+            {isDark ? (
+              <>
+                <Sun className="h-4 w-4" />
+                <span>Light Mode</span>
+              </>
+            ) : (
+              <>
+                <Moon className="h-4 w-4" />
+                <span>Dark Mode</span>
+              </>
+            )}
+          </button>
+        </div>
+      </aside>
+    </>
+  );
+}

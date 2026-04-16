@@ -1,0 +1,85 @@
+{
+  "kind": "singleType",
+  "collectionName": "site_config",
+  "info": {
+    "singularName": "site-config",
+    "pluralName": "site-configs",
+    "displayName": "Site Config",
+    "description": "Global site configuration: name, contact info, social links"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginsOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "shortName": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "institution": {
+      "type": "string",
+      "required": true,
+      "maxLength": 300
+    },
+    "department": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "location": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "email": {
+      "type": "email",
+      "required": true
+    },
+    "phone": {
+      "type": "string",
+      "maxLength": 50
+    },
+    "bio": {
+      "type": "text"
+    },
+    "linkedinUrl": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "scholarUrl": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "githubUrl": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "orcidUrl": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "researchGateUrl": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "cvUrl": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "profileImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}

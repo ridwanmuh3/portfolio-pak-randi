@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "collaborators",
+  "info": {
+    "singularName": "collaborator",
+    "pluralName": "collaborators",
+    "displayName": "Collaborator",
+    "description": "Research collaborators and co-authors"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginsOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "affiliation": {
+      "type": "string",
+      "required": true,
+      "maxLength": 300
+    },
+    "url": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

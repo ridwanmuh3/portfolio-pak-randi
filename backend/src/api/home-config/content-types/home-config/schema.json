@@ -1,0 +1,46 @@
+{
+  "kind": "singleType",
+  "collectionName": "home_config",
+  "info": {
+    "singularName": "home-config",
+    "pluralName": "home-configs",
+    "displayName": "Home Config",
+    "description": "Home page content: welcome text, recruitment, research interests, highlights"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginsOptions": {},
+  "attributes": {
+    "welcomeHeading": {
+      "type": "string",
+      "maxLength": 200,
+      "default": "Welcome"
+    },
+    "welcomeParagraphs": {
+      "type": "json",
+      "required": true
+    },
+    "recruitmentHeading": {
+      "type": "string",
+      "maxLength": 200,
+      "default": "Student Recruitment"
+    },
+    "recruitmentBody": {
+      "type": "text",
+      "required": true
+    },
+    "recruitmentTags": {
+      "type": "json",
+      "required": false
+    },
+    "researchInterests": {
+      "type": "json",
+      "required": false
+    },
+    "highlights": {
+      "type": "json",
+      "required": false
+    }
+  }
+}

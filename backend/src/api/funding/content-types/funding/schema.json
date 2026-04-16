@@ -1,0 +1,49 @@
+{
+  "kind": "collectionType",
+  "collectionName": "fundings",
+  "info": {
+    "singularName": "funding",
+    "pluralName": "fundings",
+    "displayName": "Funding",
+    "description": "Research grants and funding sources"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginsOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 300
+    },
+    "agency": {
+      "type": "string",
+      "required": true,
+      "maxLength": 300
+    },
+    "amount": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "period": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50
+    },
+    "role": {
+      "type": "enumeration",
+      "enum": ["Principal Investigator", "Co-Investigator", "Researcher"],
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

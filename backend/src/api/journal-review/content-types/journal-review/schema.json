@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "journal_reviews",
+  "info": {
+    "singularName": "journal-review",
+    "pluralName": "journal-reviews",
+    "displayName": "Journal Review",
+    "description": "Journals where reviewer service has been provided"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginsOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 300
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

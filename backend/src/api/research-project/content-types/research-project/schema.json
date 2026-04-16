@@ -1,0 +1,43 @@
+{
+  "kind": "collectionType",
+  "collectionName": "research_projects",
+  "info": {
+    "singularName": "research-project",
+    "pluralName": "research-projects",
+    "displayName": "Research Project",
+    "description": "Active and completed research initiatives"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginsOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 300
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["Ongoing", "Completed"],
+      "required": true
+    },
+    "period": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "tags": {
+      "type": "json",
+      "required": false
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "kind": "collectionType",
+  "collectionName": "memberships",
+  "info": {
+    "singularName": "membership",
+    "pluralName": "memberships",
+    "displayName": "Membership",
+    "description": "Professional society memberships and affiliations"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginsOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 300
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

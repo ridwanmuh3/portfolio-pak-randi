@@ -1,0 +1,54 @@
+{
+  "kind": "collectionType",
+  "collectionName": "publications",
+  "info": {
+    "singularName": "publication",
+    "pluralName": "publications",
+    "displayName": "Publication",
+    "description": "Peer-reviewed publications: journal articles, conference papers, book chapters"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginsOptions": {},
+  "attributes": {
+    "type": {
+      "type": "enumeration",
+      "enum": ["Journal", "Conference", "Book Chapter"],
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 500
+    },
+    "authors": {
+      "type": "string",
+      "required": true,
+      "maxLength": 500
+    },
+    "venue": {
+      "type": "string",
+      "required": true,
+      "maxLength": 300
+    },
+    "year": {
+      "type": "integer",
+      "required": true,
+      "min": 1900,
+      "max": 2100
+    },
+    "doi": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "corresponding": {
+      "type": "boolean",
+      "default": false
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

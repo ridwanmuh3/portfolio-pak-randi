@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "conference_committees",
+  "info": {
+    "singularName": "conference-committee",
+    "pluralName": "conference-committees",
+    "displayName": "Conference Committee",
+    "description": "Conference program committee roles and session chairing"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginsOptions": {},
+  "attributes": {
+    "role": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "venue": {
+      "type": "string",
+      "required": true,
+      "maxLength": 300
+    },
+    "year": {
+      "type": "string",
+      "required": true,
+      "maxLength": 20
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

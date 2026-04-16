@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "supervisions",
+  "info": {
+    "singularName": "supervision",
+    "pluralName": "supervisions",
+    "displayName": "Supervision",
+    "description": "Student supervision statistics by degree level"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginsOptions": {},
+  "attributes": {
+    "level": {
+      "type": "enumeration",
+      "enum": ["Ph.D.", "Master", "Undergraduate"],
+      "required": true
+    },
+    "ongoing": {
+      "type": "integer",
+      "required": true,
+      "min": 0,
+      "default": 0
+    },
+    "completed": {
+      "type": "integer",
+      "required": true,
+      "min": 0,
+      "default": 0
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

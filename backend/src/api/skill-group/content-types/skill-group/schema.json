@@ -1,0 +1,29 @@
+{
+  "kind": "collectionType",
+  "collectionName": "skill_groups",
+  "info": {
+    "singularName": "skill-group",
+    "pluralName": "skill-groups",
+    "displayName": "Skill Group",
+    "description": "Grouped skill categories with items"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginsOptions": {},
+  "attributes": {
+    "category": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "items": {
+      "type": "json",
+      "required": true
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "kind": "collectionType",
+  "collectionName": "showcase_projects",
+  "info": {
+    "singularName": "showcase-project",
+    "pluralName": "showcase-projects",
+    "displayName": "Showcase Project",
+    "description": "Open source tools and technical project showcases"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginsOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["Open Source", "Research Prototype", "Industry Collaboration"],
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "tech": {
+      "type": "json",
+      "required": false
+    },
+    "link": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

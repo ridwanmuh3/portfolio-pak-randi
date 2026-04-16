@@ -1,0 +1,40 @@
+{
+  "kind": "collectionType",
+  "collectionName": "talks",
+  "info": {
+    "singularName": "talk",
+    "pluralName": "talks",
+    "displayName": "Talk",
+    "description": "Invited talks and presentations"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginsOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 300
+    },
+    "event": {
+      "type": "string",
+      "required": true,
+      "maxLength": 300
+    },
+    "location": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "date": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

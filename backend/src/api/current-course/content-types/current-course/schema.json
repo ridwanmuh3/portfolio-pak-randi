@@ -1,0 +1,44 @@
+{
+  "kind": "collectionType",
+  "collectionName": "current_courses",
+  "info": {
+    "singularName": "current-course",
+    "pluralName": "current-courses",
+    "displayName": "Current Course",
+    "description": "Currently active courses being taught"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginsOptions": {},
+  "attributes": {
+    "code": {
+      "type": "string",
+      "required": true,
+      "maxLength": 20
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "level": {
+      "type": "enumeration",
+      "enum": ["Undergraduate", "Graduate"],
+      "required": true
+    },
+    "semester": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

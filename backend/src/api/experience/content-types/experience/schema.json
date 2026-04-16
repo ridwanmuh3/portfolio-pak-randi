@@ -1,0 +1,44 @@
+{
+  "kind": "collectionType",
+  "collectionName": "experiences",
+  "info": {
+    "singularName": "experience",
+    "pluralName": "experiences",
+    "displayName": "Experience",
+    "description": "Professional and academic work experience"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginsOptions": {},
+  "attributes": {
+    "role": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "organization": {
+      "type": "string",
+      "required": true,
+      "maxLength": 300
+    },
+    "location": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "period": {
+      "type": "string",
+      "required": true,
+      "maxLength": 50
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}
