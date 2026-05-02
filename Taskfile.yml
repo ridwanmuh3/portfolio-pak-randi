@@ -1,0 +1,192 @@
+version: "3"
+
+vars:
+  BACKEND_DIR: "{{.ROOT_DIR}}/backend"
+  FRONTEND_DIR: "{{.ROOT_DIR}}/frontend"
+
+# ---------------------------------------------------------------------------
+# Development
+# ---------------------------------------------------------------------------
+tasks:
+  dev:
+    desc: "Start backend + frontend in dev mode (parallel)"
+    deps: [dev:backend, dev:frontend]
+
+  dev:backend:
+    desc: "Start Strapi in dev mode (hot reload)"
+    dir: "{{.BACKEND_DIR}}"
+    cmd: npm run dev
+
+  dev:frontend:
+    desc: "Start Next.js in dev mode"
+    dir: "{{.FRONTEND_DIR}}"
+    cmd: pnpm dev
+
+  # ---------------------------------------------------------------------------
+  # Build
+  # ---------------------------------------------------------------------------
+  build:
+    desc: "Build backend + frontend"
+    deps: [build:backend, build:frontend]
+
+  build:backend:
+    desc: "Build Strapi (TypeScript compile)"
+    dir: "{{.BACKEND_DIR}}"
+    cmd: npm run build
+
+  build:frontend:
+    desc: "Build Next.js for production"
+    dir: "{{.FRONTEND_DIR}}"
+    cmd: pnpm build
+
+  # ---------------------------------------------------------------------------
+  # Lint / Type-check
+  # ---------------------------------------------------------------------------
+  lint:
+    desc: "Lint frontend (ESLint)"
+    dir: "{{.FRONTEND_DIR}}"
+    cmd: pnpm lint
+
+  typecheck:
+    desc: "TypeScript type-check frontend"
+    dir: "{{.FRONTEND_DIR}}"
+    cmd: pnpm exec tsc --noEmit
+
+  # ---------------------------------------------------------------------------
+  # Install dependencies
+  # ---------------------------------------------------------------------------
+  install:
+    desc: "Install deps for backend + frontend"
+    deps: [install:backend, install:frontend]
+
+  install:backend:
+    desc: "Install backend dependencies"
+    dir: "{{.BACKEND_DIR}}"
+    cmd: npm install
+
+  install:frontend:
+    desc: "Install frontend dependencies"
+    dir: "{{.FRONTEND_DIR}}"
+    cmd: pnpm install
+
+  # ---------------------------------------------------------------------------
+  # Docker — local (no .env required, uses defaults)
+  # ---------------------------------------------------------------------------
+  docker:up:
+    desc: "Build and start all containers (detached)"
+    cmd: docker compose up --build -d
+
+  docker:down:
+    desc: "Stop and remove containers (keeps volumes)"
+    cmd: docker compose down
+
+  docker:restart:
+    desc: "Restart all containers without rebuild"
+    cmd: docker compose restart
+
+  docker:logs:
+    desc: "Tail logs from all containers"
+    cmd: docker compose logs -f
+
+  docker:logs:backend:
+    desc: "Tail Strapi logs"
+    cmd: docker compose logs -f backend
+
+  docker:logs:frontend:
+    desc: "Tail Next.js logs"
+    cmd: docker compose logs -f frontend
+
+  docker:logs:nginx:
+    desc: "Tail nginx logs"
+    cmd: docker compose logs -f nginx
+
+  docker:ps:
+    desc: "Show running containers and their status"
+    cmd: docker compose ps
+
+  # ---------------------------------------------------------------------------
+  # Docker — rebuild individual services
+  # ---------------------------------------------------------------------------
+  docker:rebuild:backend:
+    desc: "Rebuild and restart only the backend service"
+    cmd: docker compose up --build -d --no-deps backend
+
+  docker:rebuild:frontend:
+    desc: "Rebuild and restart only the frontend service"
+    cmd: docker compose up --build -d --no-deps frontend
+
+  docker:rebuild:nginx:
+    desc: "Rebuild and restart only nginx"
+    cmd: docker compose up --build -d --no-deps nginx
+
+  # ---------------------------------------------------------------------------
+  # Docker — cleanup
+  # ---------------------------------------------------------------------------
+  docker:clean:
+    desc: "Stop containers and remove volumes (WIPES database + uploads)"
+    prompt: "This will DELETE the database and all uploads. Continue?"
+    cmd: docker compose down -v
+
+  docker:prune:
+    desc: "Remove dangling images to free disk space"
+    cmd: docker image prune -f
+
+  # ---------------------------------------------------------------------------
+  # Database (SQLite dev only)
+  # ---------------------------------------------------------------------------
+  db:reset:
+    desc: "Delete local SQLite DB (triggers re-seed on next backend start)"
+    prompt: "This will delete backend/.tmp/data.db. Continue?"
+    cmd: rm -f "{{.BACKEND_DIR}}/.tmp/data.db"
+
+  # ---------------------------------------------------------------------------
+  # Strapi helpers
+  # ---------------------------------------------------------------------------
+  strapi:console:
+    desc: "Open Strapi interactive console"
+    dir: "{{.BACKEND_DIR}}"
+    cmd: npm run console
+
+  strapi:admin:url:
+    desc: "Print Strapi admin URL"
+    cmd: echo "http://localhost:1337/admin"
+
+  # ---------------------------------------------------------------------------
+  # Env helpers
+  # ---------------------------------------------------------------------------
+  env:check:
+    desc: "Verify required .env files exist"
+    cmds:
+      - |
+        missing=0
+        for f in backend/.env frontend/.env.local .env; do
+          if [ ! -f "{{.ROOT_DIR}}/$f" ]; then
+            echo "MISSING: $f"
+            missing=1
+          else
+            echo "OK:      $f"
+          fi
+        done
+        [ $missing -eq 0 ] && echo "All env files present." || exit 1
+
+  env:init:
+    desc: "Copy .env.example files (skip if already exists)"
+    cmds:
+      - |
+        cp_if_missing() {
+          [ -f "$2" ] && echo "EXISTS: $2" || { cp "$1" "$2"; echo "CREATED: $2"; }
+        }
+        cp_if_missing "{{.ROOT_DIR}}/.env.example"           "{{.ROOT_DIR}}/.env"
+        cp_if_missing "{{.ROOT_DIR}}/frontend/.env.example"  "{{.ROOT_DIR}}/frontend/.env.local"
+        cp_if_missing "{{.ROOT_DIR}}/backend/.env.example"   "{{.ROOT_DIR}}/backend/.env"
+
+  # ---------------------------------------------------------------------------
+  # Git helpers
+  # ---------------------------------------------------------------------------
+  git:status:
+    desc: "Short git status"
+    cmd: git -C "{{.ROOT_DIR}}" status -s
+
+  git:log:
+    desc: "Recent commits (one-line)"
+    cmd: git -C "{{.ROOT_DIR}}" log --oneline -15
