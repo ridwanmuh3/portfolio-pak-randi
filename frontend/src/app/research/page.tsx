@@ -44,7 +44,7 @@ export default async function ResearchPage() {
               <h3 className="text-lg font-semibold text-slate-900 group-hover:text-emerald-700 dark:text-slate-50 dark:group-hover:text-emerald-400">{project.title}</h3>
               <p className="mt-2 flex-1 text-sm text-slate-600 dark:text-slate-300">{project.description}</p>
               <div className="mt-4 flex flex-wrap gap-2">
-                {project.tags.map((tag) => <span key={tag} className="chip">{tag}</span>)}
+                {(project.tags ?? []).map((tag) => <span key={tag} className="chip">{tag}</span>)}
               </div>
             </article>
           ))}

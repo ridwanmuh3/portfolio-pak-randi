@@ -64,7 +64,7 @@ export default async function ProjectsPage() {
               <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-50">{p.title}</h3>
               <p className="mt-2 flex-1 text-sm text-slate-600 dark:text-slate-300">{p.description}</p>
               <div className="mt-4 flex flex-wrap gap-2">
-                {p.tech.map((t) => <span key={t} className="chip">{t}</span>)}
+                {(p.tech ?? []).map((t) => <span key={t} className="chip">{t}</span>)}
               </div>
               {p.link && (
                 <a href={p.link} className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-600 hover:underline dark:text-emerald-400">

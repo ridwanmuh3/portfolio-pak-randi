@@ -10,6 +10,9 @@ RUN pnpm install --frozen-lockfile
 
 FROM base AS builder
 ENV NEXT_TELEMETRY_DISABLED=1
+# NEXT_PUBLIC_ vars are inlined at build time — must be passed as build args.
+ARG NEXT_PUBLIC_STRAPI_URL
+ENV NEXT_PUBLIC_STRAPI_URL=$NEXT_PUBLIC_STRAPI_URL
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN pnpm build

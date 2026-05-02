@@ -1,5 +1,25 @@
 import type { NextConfig } from "next";
 
+// Derive Strapi origin for CSP — needed so the browser can load uploaded images.
+// NEXT_PUBLIC_STRAPI_URL is available at build time (Next.js inlines NEXT_PUBLIC_ vars).
+function getStrapiOrigin(): string {
+  const raw = process.env.NEXT_PUBLIC_STRAPI_URL ?? "";
+  if (!raw) return "";
+  try {
+    const u = new URL(raw);
+    if (u.protocol !== "http:" && u.protocol !== "https:") return "";
+    return u.origin; // e.g. "http://localhost:1337"
+  } catch {
+    return "";
+  }
+}
+
+const strapiOrigin = getStrapiOrigin();
+
+// img-src must include the Strapi origin so unoptimized <Image> tags (used for
+// profile photos) are not blocked by the browser's CSP enforcement.
+const imgSrc = ["'self'", "data:", "blob:", ...(strapiOrigin ? [strapiOrigin] : [])].join(" ");
+
 const securityHeaders = [
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -21,7 +41,7 @@ const securityHeaders = [
       "form-action 'self'",
       "frame-ancestors 'none'",
       "object-src 'none'",
-      "img-src 'self' data: blob:",
+      `img-src ${imgSrc}`,
       "font-src 'self' data:",
       "style-src 'self' 'unsafe-inline'",
       "script-src 'self'",

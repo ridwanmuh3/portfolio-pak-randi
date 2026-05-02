@@ -105,7 +105,7 @@ export default async function ExperiencesPage() {
             <article key={group.category} className="section-card">
               <h3 className="mb-3 text-base font-semibold text-slate-900 dark:text-slate-50">{group.category}</h3>
               <div className="flex flex-wrap gap-2">
-                {group.items.map((item) => <span key={item} className="chip">{item}</span>)}
+                {(group.items ?? []).map((item) => <span key={item} className="chip">{item}</span>)}
               </div>
             </article>
           ))}
