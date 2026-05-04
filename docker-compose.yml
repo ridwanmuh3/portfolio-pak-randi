@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:17-alpine
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-strapi}
@@ -22,7 +22,11 @@ services:
     networks:
       - internal
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-strapi} -d ${POSTGRES_DB:-strapi}"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-strapi} -d ${POSTGRES_DB:-strapi}",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -109,7 +113,13 @@ services:
     networks:
       - web
     healthcheck:
-      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/projects/smartqr').catch(()=>process.exit(1))"]
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://localhost:3000/projects/smartqr').catch(()=>process.exit(1))",
+        ]
       interval: 30s
       timeout: 10s
       retries: 3
