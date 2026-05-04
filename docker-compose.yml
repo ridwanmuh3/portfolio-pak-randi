@@ -72,6 +72,12 @@ services:
     networks:
       - web
       - internal
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:1337/_health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
 
   frontend:
     build:
@@ -88,16 +94,25 @@ services:
       STRAPI_URL: http://backend:1337
       STRAPI_API_TOKEN: ${STRAPI_API_TOKEN}
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     expose:
       - "3000"
     networks:
       - web
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   smartqr:
     build:
       context: ../../research/smart-secure-qr-web
       dockerfile: Dockerfile
+      args:
+        NUXT_APP_BASE_URL: /projects/smartqr
     restart: unless-stopped
     environment:
       NODE_ENV: production
@@ -108,6 +123,8 @@ services:
       SUPABASE_URL: ${SMARTQR_SUPABASE_URL}
       SUPABASE_KEY: ${SMARTQR_SUPABASE_KEY}
       SUPABASE_SERVICE_KEY: ${SMARTQR_SUPABASE_SERVICE_KEY}
+      NUXT_TRUSTED_PROXY: ${NUXT_TRUSTED_PROXY:-true}
+      NUXT_VERIFY_TOKEN_TTL_SEC: ${NUXT_VERIFY_TOKEN_TTL_SEC:-90}
     expose:
       - "3000"
     networks:
@@ -133,9 +150,12 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - frontend
-      - backend
-      - smartqr
+      frontend:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+      smartqr:
+        condition: service_healthy
     networks:
       - web
 

@@ -4,7 +4,12 @@
       "Bash(xargs cat *)",
       "Read(//shared/projects/works/**)",
       "Read(//shared/projects/**)",
-      "Read(//shared/**)"
+      "Read(//shared/**)",
+      "Bash(task --list)",
+      "Bash(docker compose *)",
+      "Bash(POSTGRES_PASSWORD=x APP_KEYS=x API_TOKEN_SALT=x ADMIN_JWT_SECRET=x TRANSFER_TOKEN_SALT=x JWT_SECRET=x ENCRYPTION_KEY=x NEXT_PUBLIC_STRAPI_URL=http://localhost STRAPI_API_TOKEN=x SMARTQR_SUPABASE_URL=x SMARTQR_SUPABASE_KEY=x SMARTQR_SUPABASE_SERVICE_KEY=x docker compose config --quiet)",
+      "Bash(POSTGRES_PASSWORD=x APP_KEYS=x API_TOKEN_SALT=x ADMIN_JWT_SECRET=x TRANSFER_TOKEN_SALT=x JWT_SECRET=x ENCRYPTION_KEY=x NEXT_PUBLIC_STRAPI_URL=http://localhost STRAPI_API_TOKEN=x SMARTQR_SUPABASE_URL=x SMARTQR_SUPABASE_KEY=x SMARTQR_SUPABASE_SERVICE_KEY=x docker compose config)",
+      "Bash(grep -oP '\\\\$\\\\{[A-Z_]+[^}]*\\\\}' /shared/projects/works/portfolio-pak-randi/docker-compose.yml)"
     ],
     "additionalDirectories": [
       "/shared/projects/research/smart-secure-qr-web"
