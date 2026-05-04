@@ -1,233 +1,76 @@
 version: "3"
 
-vars:
-  BACKEND_DIR: "{{.ROOT_DIR}}/backend"
-  FRONTEND_DIR: "{{.ROOT_DIR}}/frontend"
-
-# ---------------------------------------------------------------------------
-# Development
-# ---------------------------------------------------------------------------
 tasks:
-  dev:
-    desc: "Start backend + frontend in dev mode (parallel)"
-    deps: [dev:backend, dev:frontend]
+  up:
+    desc: Run all services (production mode)
+    cmds:
+      - docker compose up -d --build
 
-  dev:backend:
-    desc: "Start Strapi in dev mode (hot reload)"
-    dir: "{{.BACKEND_DIR}}"
-    cmd: npm run dev
+  down:
+    desc: Stop all services
+    cmds:
+      - docker compose down
 
-  dev:frontend:
-    desc: "Start Next.js in dev mode"
-    dir: "{{.FRONTEND_DIR}}"
-    cmd: pnpm dev
+  restart:
+    desc: Restart all services
+    cmds:
+      - docker compose down
+      - docker compose up -d --build
 
-  # ---------------------------------------------------------------------------
-  # Build
-  # ---------------------------------------------------------------------------
+  logs:
+    desc: Show logs (all services)
+    cmds:
+      - docker compose logs -f
+
+  logs:backend:
+    desc: Logs backend (Strapi)
+    cmds:
+      - docker compose logs -f backend
+
+  logs:nginx:
+    desc: Logs nginx
+    cmds:
+      - docker compose logs -f nginx
+
+  logs:db:
+    desc: Logs postgres
+    cmds:
+      - docker compose logs -f postgres
+
   build:
-    desc: "Build all apps (backend + frontend)"
-    deps: [build:backend, build:frontend]
-
-  build:backend:
-    desc: "Build Strapi (TypeScript compile)"
-    dir: "{{.BACKEND_DIR}}"
-    cmd: npm run build
-
-  build:frontend:
-    desc: "Build Next.js for production"
-    dir: "{{.FRONTEND_DIR}}"
-    cmd: pnpm build
-
-  # ---------------------------------------------------------------------------
-  # Lint / Type-check
-  # ---------------------------------------------------------------------------
-  lint:
-    desc: "Lint frontend (ESLint)"
-    dir: "{{.FRONTEND_DIR}}"
-    cmd: pnpm lint
-
-  typecheck:
-    desc: "TypeScript type-check frontend"
-    dir: "{{.FRONTEND_DIR}}"
-    cmd: pnpm exec tsc --noEmit
-
-  # ---------------------------------------------------------------------------
-  # Install dependencies
-  # ---------------------------------------------------------------------------
-  install:
-    desc: "Install deps for all apps"
-    deps: [install:backend, install:frontend]
-
-  install:backend:
-    desc: "Install backend dependencies"
-    dir: "{{.BACKEND_DIR}}"
-    cmd: npm install
-
-  install:frontend:
-    desc: "Install frontend dependencies"
-    dir: "{{.FRONTEND_DIR}}"
-    cmd: pnpm install
-
-  # ---------------------------------------------------------------------------
-  # Docker — full stack
-  # ---------------------------------------------------------------------------
-  docker:up:
-    desc: "Build and start all containers (detached)"
-    cmd: docker compose up --build -d
-
-  docker:down:
-    desc: "Stop and remove containers (keeps volumes)"
-    cmd: docker compose down
-
-  docker:restart:
-    desc: "Restart all containers without rebuild"
-    cmd: docker compose restart
-
-  docker:logs:
-    desc: "Tail logs from all containers"
-    cmd: docker compose logs -f
-
-  docker:ps:
-    desc: "Show running containers and their status"
-    cmd: docker compose ps
-
-  # ---------------------------------------------------------------------------
-  # Docker — per-service logs
-  # ---------------------------------------------------------------------------
-  docker:logs:backend:
-    desc: "Tail Strapi logs"
-    cmd: docker compose logs -f backend
-
-  docker:logs:frontend:
-    desc: "Tail Next.js logs"
-    cmd: docker compose logs -f frontend
-
-  docker:logs:nginx:
-    desc: "Tail nginx logs"
-    cmd: docker compose logs -f nginx
-
-  # ---------------------------------------------------------------------------
-  # Docker — rebuild individual services
-  # ---------------------------------------------------------------------------
-  docker:rebuild:backend:
-    desc: "Rebuild and restart only backend"
-    cmd: docker compose up --build -d --no-deps backend
-
-  docker:rebuild:frontend:
-    desc: "Rebuild and restart only frontend"
-    cmd: docker compose up --build -d --no-deps frontend
-
-  docker:rebuild:nginx:
-    desc: "Rebuild and restart only nginx"
-    cmd: docker compose up --build -d --no-deps nginx
-
-  # ---------------------------------------------------------------------------
-  # Docker — cleanup
-  # ---------------------------------------------------------------------------
-  docker:clean:
-    desc: "Stop containers and remove volumes (WIPES database + uploads)"
-    prompt: "This will DELETE the database and all uploads. Continue?"
-    cmd: docker compose down -v
-
-  docker:prune:
-    desc: "Remove dangling images to free disk space"
-    cmd: docker image prune -f
-
-  # ---------------------------------------------------------------------------
-  # Deploy
-  # ---------------------------------------------------------------------------
-  deploy:
-    desc: "Full deploy — pull latest git, rebuild all containers, wait for health"
+    desc: Build all images
     cmds:
-      - git -C "{{.ROOT_DIR}}" pull
-      - docker compose up --build -d
-      - task: health
+      - docker compose build --no-cache
 
-  # ---------------------------------------------------------------------------
-  # Health checks
-  # ---------------------------------------------------------------------------
+  rebuild:
+    desc: Full rebuild (clean + build + up)
+    cmds:
+      - docker compose down -v
+      - docker compose build --no-cache
+      - docker compose up -d
+
+  clean:
+    desc: Remove containers, volumes, unused images
+    cmds:
+      - docker compose down -v
+      - docker system prune -f
+
+  shell:backend:
+    desc: Access backend container
+    cmds:
+      - docker compose exec backend sh
+
+  shell:nginx:
+    desc: Access nginx container
+    cmds:
+      - docker compose exec nginx sh
+
+  db:
+    desc: Open postgres CLI
+    cmds:
+      - docker compose exec postgres psql -U ${POSTGRES_USER:-strapi}
+
   health:
-    desc: "Wait for all services to become healthy"
+    desc: Check service health
     cmds:
-      - task: health:frontend
-
-  health:frontend:
-    desc: "Wait for frontend healthcheck to pass"
-    cmd: |
-      echo "Waiting for frontend..."
-      for i in $(seq 1 12); do
-        docker compose ps frontend 2>/dev/null | grep -q "(healthy)" && echo "frontend healthy." && exit 0
-        echo "  [$i/12] waiting..."
-        sleep 5
-      done
-      echo "Timeout waiting for frontend." && exit 1
-
-  # ---------------------------------------------------------------------------
-  # Database (SQLite dev only)
-  # ---------------------------------------------------------------------------
-  db:reset:
-    desc: "Delete local SQLite DB (triggers re-seed on next backend start)"
-    prompt: "This will delete backend/.tmp/data.db. Continue?"
-    cmd: rm -f "{{.BACKEND_DIR}}/.tmp/data.db"
-
-  # ---------------------------------------------------------------------------
-  # Strapi helpers
-  # ---------------------------------------------------------------------------
-  strapi:console:
-    desc: "Open Strapi interactive console"
-    dir: "{{.BACKEND_DIR}}"
-    cmd: npm run console
-
-  strapi:admin:url:
-    desc: "Print Strapi admin URL"
-    cmd: echo "http://localhost:1337/admin"
-
-  # ---------------------------------------------------------------------------
-  # Env helpers
-  # ---------------------------------------------------------------------------
-  env:check:
-    desc: "Verify required .env files and vars exist"
-    cmds:
-      - |
-        missing=0
-        for f in backend/.env frontend/.env.local .env; do
-          if [ ! -f "{{.ROOT_DIR}}/$f" ]; then
-            echo "MISSING FILE: $f"
-            missing=1
-          else
-            echo "OK FILE:      $f"
-          fi
-        done
-        for var in NEXT_PUBLIC_STRAPI_URL STRAPI_API_TOKEN POSTGRES_PASSWORD; do
-          val=$(grep -s "^${var}=" "{{.ROOT_DIR}}/.env" | cut -d= -f2-)
-          if [ -z "$val" ]; then
-            echo "MISSING VAR:  $var (in .env)"
-            missing=1
-          else
-            echo "OK VAR:       $var"
-          fi
-        done
-        [ $missing -eq 0 ] && echo "All env checks passed." || exit 1
-
-  env:init:
-    desc: "Copy .env.example files to .env (skip if already exists)"
-    cmds:
-      - |
-        cp_if_missing() {
-          [ -f "$2" ] && echo "EXISTS: $2" || { cp "$1" "$2"; echo "CREATED: $2"; }
-        }
-        cp_if_missing "{{.ROOT_DIR}}/.env.example"           "{{.ROOT_DIR}}/.env"
-        cp_if_missing "{{.ROOT_DIR}}/frontend/.env.example"  "{{.ROOT_DIR}}/frontend/.env.local"
-        cp_if_missing "{{.ROOT_DIR}}/backend/.env.example"   "{{.ROOT_DIR}}/backend/.env"
-
-  # ---------------------------------------------------------------------------
-  # Git helpers
-  # ---------------------------------------------------------------------------
-  git:status:
-    desc: "Short git status (portfolio)"
-    cmd: git -C "{{.ROOT_DIR}}" status -s
-
-  git:log:
-    desc: "Recent commits (one-line, portfolio)"
-    cmd: git -C "{{.ROOT_DIR}}" log --oneline -15
+      - docker compose ps
