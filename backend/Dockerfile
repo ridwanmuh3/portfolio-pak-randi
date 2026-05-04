@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 
-FROM node:20-alpine AS base
+FROM node:24-alpine AS base
 WORKDIR /opt/app
 
 # =========================
@@ -30,7 +30,7 @@ RUN npm prune --omit=dev
 # =========================
 # RUNTIME (LEAN)
 # =========================
-FROM node:20-alpine AS runner
+FROM node:24-alpine AS runner
 RUN apk add --no-cache vips tini
 
 ENV NODE_ENV=production
