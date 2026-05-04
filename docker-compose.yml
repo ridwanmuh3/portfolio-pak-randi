@@ -14,9 +14,15 @@ services:
       - "-c"
       - "ssl=off"
       - "-c"
-      - "max_connections=100"
+      - "max_connections=50"
       - "-c"
-      - "shared_buffers=256MB"
+      - "shared_buffers=128MB"
+      - "-c"
+      - "work_mem=4MB"
+      - "-c"
+      - "maintenance_work_mem=32MB"
+      - "-c"
+      - "effective_cache_size=256MB"
     volumes:
       - pg_data:/var/lib/postgresql/data
     networks:
@@ -33,6 +39,8 @@ services:
     # No `ports:` — DB not exposed to host
     security_opt:
       - no-new-privileges:true
+    mem_limit: 384m
+    memswap_limit: 384m
 
   backend:
     build:
@@ -57,8 +65,9 @@ services:
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
       DATABASE_SCHEMA: public
       DATABASE_SSL: "false"
-      DATABASE_POOL_MIN: 2
-      DATABASE_POOL_MAX: 10
+      DATABASE_POOL_MIN: 1
+      DATABASE_POOL_MAX: 5
+      NODE_OPTIONS: "--max-old-space-size=384"
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost}
       URL: ${STRAPI_PUBLIC_URL:-http://localhost/}
       PROXY: "true"
@@ -78,6 +87,8 @@ services:
       timeout: 5s
       retries: 5
       start_period: 60s
+    mem_limit: 512m
+    memswap_limit: 512m
 
   frontend:
     build:
@@ -93,6 +104,7 @@ services:
       NODE_ENV: production
       STRAPI_URL: http://backend:1337
       STRAPI_API_TOKEN: ${STRAPI_API_TOKEN}
+      NODE_OPTIONS: "--max-old-space-size=384"
     depends_on:
       backend:
         condition: service_healthy
@@ -106,41 +118,8 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
-
-  smartqr:
-    build:
-      context: ../../research/smart-secure-qr-web
-      dockerfile: Dockerfile
-      args:
-        NUXT_APP_BASE_URL: /projects/smartqr
-    restart: unless-stopped
-    environment:
-      NODE_ENV: production
-      NITRO_PORT: "3000"
-      NITRO_HOST: "0.0.0.0"
-      NUXT_APP_BASE_URL: /projects/smartqr
-      NUXT_PUBLIC_BASE_URL: ${SMARTQR_PUBLIC_URL:-https://randirizal.my.id/projects/smartqr}
-      SUPABASE_URL: ${SMARTQR_SUPABASE_URL}
-      SUPABASE_KEY: ${SMARTQR_SUPABASE_KEY}
-      SUPABASE_SERVICE_KEY: ${SMARTQR_SUPABASE_SERVICE_KEY}
-      NUXT_TRUSTED_PROXY: ${NUXT_TRUSTED_PROXY:-true}
-      NUXT_VERIFY_TOKEN_TTL_SEC: ${NUXT_VERIFY_TOKEN_TTL_SEC:-90}
-    expose:
-      - "3000"
-    networks:
-      - web
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "node",
-          "-e",
-          "fetch('http://localhost:3000/projects/smartqr').catch(()=>process.exit(1))",
-        ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 20s
+    mem_limit: 512m
+    memswap_limit: 512m
 
   nginx:
     build:
@@ -149,12 +128,12 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
+    mem_limit: 64m
+    memswap_limit: 64m
     depends_on:
       frontend:
         condition: service_healthy
       backend:
-        condition: service_healthy
-      smartqr:
         condition: service_healthy
     networks:
       - web
