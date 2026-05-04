@@ -17,7 +17,7 @@ RUN npm ci
 FROM base AS builder
 RUN apk add --no-cache python3 make g++ gcc libc6-compat vips-dev
 ENV NODE_ENV=production
-ENV NODE_OPTIONS="--max-old-space-size=384"
+ENV NODE_OPTIONS="--max-old-space-size=2048"
 
 COPY --from=deps /opt/app/node_modules ./node_modules
 COPY . .

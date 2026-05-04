@@ -16,7 +16,7 @@ RUN pnpm install --frozen-lockfile
 # =========================
 FROM base AS builder
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV NODE_OPTIONS="--max-old-space-size=384"
+ENV NODE_OPTIONS="--max-old-space-size=2048"
 
 ARG NEXT_PUBLIC_STRAPI_URL
 ENV NEXT_PUBLIC_STRAPI_URL=$NEXT_PUBLIC_STRAPI_URL
