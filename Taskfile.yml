@@ -3,15 +3,14 @@ version: "3"
 vars:
   BACKEND_DIR: "{{.ROOT_DIR}}/backend"
   FRONTEND_DIR: "{{.ROOT_DIR}}/frontend"
-  SMARTQR_DIR: "{{.ROOT_DIR}}/../../research/smart-secure-qr-web"
 
 # ---------------------------------------------------------------------------
 # Development
 # ---------------------------------------------------------------------------
 tasks:
   dev:
-    desc: "Start backend + frontend + smartqr in dev mode (parallel)"
-    deps: [dev:backend, dev:frontend, dev:smartqr]
+    desc: "Start backend + frontend in dev mode (parallel)"
+    deps: [dev:backend, dev:frontend]
 
   dev:backend:
     desc: "Start Strapi in dev mode (hot reload)"
@@ -23,17 +22,12 @@ tasks:
     dir: "{{.FRONTEND_DIR}}"
     cmd: pnpm dev
 
-  dev:smartqr:
-    desc: "Start smartqr Nuxt app in dev mode"
-    dir: "{{.SMARTQR_DIR}}"
-    cmd: npm run dev
-
   # ---------------------------------------------------------------------------
   # Build
   # ---------------------------------------------------------------------------
   build:
-    desc: "Build all apps (backend + frontend + smartqr)"
-    deps: [build:backend, build:frontend, build:smartqr]
+    desc: "Build all apps (backend + frontend)"
+    deps: [build:backend, build:frontend]
 
   build:backend:
     desc: "Build Strapi (TypeScript compile)"
@@ -44,11 +38,6 @@ tasks:
     desc: "Build Next.js for production"
     dir: "{{.FRONTEND_DIR}}"
     cmd: pnpm build
-
-  build:smartqr:
-    desc: "Build smartqr Nuxt app for production"
-    dir: "{{.SMARTQR_DIR}}"
-    cmd: npm run build
 
   # ---------------------------------------------------------------------------
   # Lint / Type-check
@@ -68,7 +57,7 @@ tasks:
   # ---------------------------------------------------------------------------
   install:
     desc: "Install deps for all apps"
-    deps: [install:backend, install:frontend, install:smartqr]
+    deps: [install:backend, install:frontend]
 
   install:backend:
     desc: "Install backend dependencies"
@@ -79,11 +68,6 @@ tasks:
     desc: "Install frontend dependencies"
     dir: "{{.FRONTEND_DIR}}"
     cmd: pnpm install
-
-  install:smartqr:
-    desc: "Install smartqr dependencies"
-    dir: "{{.SMARTQR_DIR}}"
-    cmd: npm install
 
   # ---------------------------------------------------------------------------
   # Docker — full stack
@@ -119,10 +103,6 @@ tasks:
     desc: "Tail Next.js logs"
     cmd: docker compose logs -f frontend
 
-  docker:logs:smartqr:
-    desc: "Tail smartqr logs"
-    cmd: docker compose logs -f smartqr
-
   docker:logs:nginx:
     desc: "Tail nginx logs"
     cmd: docker compose logs -f nginx
@@ -137,10 +117,6 @@ tasks:
   docker:rebuild:frontend:
     desc: "Rebuild and restart only frontend"
     cmd: docker compose up --build -d --no-deps frontend
-
-  docker:rebuild:smartqr:
-    desc: "Rebuild and restart only smartqr"
-    cmd: docker compose up --build -d --no-deps smartqr
 
   docker:rebuild:nginx:
     desc: "Rebuild and restart only nginx"
@@ -168,13 +144,6 @@ tasks:
       - docker compose up --build -d
       - task: health
 
-  deploy:smartqr:
-    desc: "Redeploy only smartqr (after smartqr repo changes)"
-    cmds:
-      - git -C "{{.SMARTQR_DIR}}" pull
-      - docker compose up --build -d --no-deps smartqr
-      - task: health:smartqr
-
   # ---------------------------------------------------------------------------
   # Health checks
   # ---------------------------------------------------------------------------
@@ -182,7 +151,6 @@ tasks:
     desc: "Wait for all services to become healthy"
     cmds:
       - task: health:frontend
-      - task: health:smartqr
 
   health:frontend:
     desc: "Wait for frontend healthcheck to pass"
@@ -194,17 +162,6 @@ tasks:
         sleep 5
       done
       echo "Timeout waiting for frontend." && exit 1
-
-  health:smartqr:
-    desc: "Wait for smartqr healthcheck to pass"
-    cmd: |
-      echo "Waiting for smartqr..."
-      for i in $(seq 1 12); do
-        docker compose ps smartqr 2>/dev/null | grep -q "(healthy)" && echo "smartqr healthy." && exit 0
-        echo "  [$i/12] waiting..."
-        sleep 5
-      done
-      echo "Timeout waiting for smartqr." && exit 1
 
   # ---------------------------------------------------------------------------
   # Database (SQLite dev only)
@@ -230,7 +187,7 @@ tasks:
   # Env helpers
   # ---------------------------------------------------------------------------
   env:check:
-    desc: "Verify required .env files and SMARTQR_ vars exist"
+    desc: "Verify required .env files and vars exist"
     cmds:
       - |
         missing=0
@@ -242,7 +199,7 @@ tasks:
             echo "OK FILE:      $f"
           fi
         done
-        for var in SMARTQR_SUPABASE_URL SMARTQR_SUPABASE_KEY SMARTQR_SUPABASE_SERVICE_KEY NEXT_PUBLIC_STRAPI_URL STRAPI_API_TOKEN POSTGRES_PASSWORD; do
+        for var in NEXT_PUBLIC_STRAPI_URL STRAPI_API_TOKEN POSTGRES_PASSWORD; do
           val=$(grep -s "^${var}=" "{{.ROOT_DIR}}/.env" | cut -d= -f2-)
           if [ -z "$val" ]; then
             echo "MISSING VAR:  $var (in .env)"
@@ -274,11 +231,3 @@ tasks:
   git:log:
     desc: "Recent commits (one-line, portfolio)"
     cmd: git -C "{{.ROOT_DIR}}" log --oneline -15
-
-  git:status:smartqr:
-    desc: "Short git status (smartqr)"
-    cmd: git -C "{{.SMARTQR_DIR}}" status -s
-
-  git:log:smartqr:
-    desc: "Recent commits (one-line, smartqr)"
-    cmd: git -C "{{.SMARTQR_DIR}}" log --oneline -15
