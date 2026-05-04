@@ -17,6 +17,23 @@ tasks:
       - docker compose down
       - docker compose up -d --build
 
+  prod:pull:
+    desc: Pull latest production images from GHCR
+    cmds:
+      - docker compose -f docker-compose.prod.yml pull
+
+  prod:up:
+    desc: Run production services using pre-built images (Zero Build)
+    cmds:
+      - docker compose -f docker-compose.prod.yml up -d
+
+  prod:update:
+    desc: Pull latest images and restart production services
+    cmds:
+      - docker compose -f docker-compose.prod.yml pull
+      - docker compose -f docker-compose.prod.yml up -d
+
+
   logs:
     desc: Show logs (all services)
     cmds:
