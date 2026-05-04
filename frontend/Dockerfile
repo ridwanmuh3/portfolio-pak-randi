@@ -38,5 +38,5 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # 🔥 hasil static export
 COPY --from=builder /app/out /usr/share/nginx/html
 
-EXPOSE 80
+EXPOSE 3000
 CMD ["nginx", "-g", "daemon off;"]
