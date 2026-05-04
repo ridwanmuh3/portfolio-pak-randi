@@ -22,7 +22,7 @@ ENV NODE_OPTIONS="--max-old-space-size=384"
 COPY --from=deps /opt/app/node_modules ./node_modules
 COPY . .
 
-COPY ./dist ./dist
+RUN npm run build
 
 # 🔥 PRUNE devDependencies
 RUN npm prune --omit=dev
