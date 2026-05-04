@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs cat *)",
+      "Read(//shared/projects/works/**)",
+      "Read(//shared/projects/**)",
+      "Read(//shared/**)"
+    ],
+    "additionalDirectories": [
+      "/shared/projects/research/smart-secure-qr-web"
+    ]
+  }
+}
