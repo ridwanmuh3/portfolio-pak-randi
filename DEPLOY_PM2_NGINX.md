@@ -80,6 +80,21 @@ pm2 save
 pm2 startup
 ```
 
+Or use Task:
+
+```bash
+task deploy
+```
+
+Task shortcuts:
+
+```bash
+task deploy:build
+task deploy:pm2:restart
+task deploy:nginx:reload
+task health
+```
+
 Useful commands:
 
 ```bash

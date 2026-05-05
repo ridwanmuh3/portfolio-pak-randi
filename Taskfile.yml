@@ -1,93 +1,178 @@
 version: "3"
 
+vars:
+  NGINX_SITE_SRC: deploy/nginx/portfolio-pak-randi.conf
+  NGINX_SITE_AVAILABLE: /etc/nginx/sites-available/portfolio-pak-randi
+  NGINX_SITE_ENABLED: /etc/nginx/sites-enabled/portfolio-pak-randi
+  FRONTEND_DIR: frontend
+  BACKEND_DIR: backend
+  PM2_ECOSYSTEM: ecosystem.config.cjs
+  PM2_FRONTEND_APP: portfolio-frontend
+  PM2_BACKEND_APP: portfolio-backend
+
 tasks:
+  deploy:
+    desc: Build apps, restart PM2, sync nginx, reload nginx
+    cmds:
+      - task: deploy:build
+      - task: deploy:pm2:restart
+      - task: deploy:nginx:install
+      - task: deploy:nginx:reload
+
+  deploy:build:
+    desc: Install deps and build frontend + backend for PM2 deploy
+    cmds:
+      - task: frontend:install
+      - task: frontend:build
+      - task: backend:install
+      - task: backend:build
+
+  deploy:pm2:start:
+    desc: Start apps with PM2 ecosystem file
+    cmds:
+      - pm2 start {{.PM2_ECOSYSTEM}}
+      - pm2 save
+
+  deploy:pm2:restart:
+    desc: Restart or start apps with PM2 ecosystem file
+    cmds:
+      - pm2 start {{.PM2_ECOSYSTEM}} --update-env
+      - pm2 save
+
+  deploy:pm2:logs:
+    desc: Show PM2 logs for both apps
+    cmds:
+      - pm2 logs {{.PM2_FRONTEND_APP}} {{.PM2_BACKEND_APP}} --lines 200
+
+  deploy:nginx:install:
+    desc: Copy nginx vhost and ensure enabled symlink exists
+    cmds:
+      - sudo cp {{.NGINX_SITE_SRC}} {{.NGINX_SITE_AVAILABLE}}
+      - sudo ln -sfn {{.NGINX_SITE_AVAILABLE}} {{.NGINX_SITE_ENABLED}}
+
+  deploy:nginx:test:
+    desc: Validate host nginx config
+    cmds:
+      - sudo nginx -t
+
+  deploy:nginx:reload:
+    desc: Validate and reload host nginx
+    cmds:
+      - task: deploy:nginx:test
+      - sudo systemctl reload nginx
+
+  frontend:install:
+    desc: Install frontend dependencies
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - pnpm install --frozen-lockfile
+
+  frontend:build:
+    desc: Build frontend for production
+    dir: "{{.FRONTEND_DIR}}"
+    cmds:
+      - pnpm build
+
+  backend:install:
+    desc: Install backend dependencies
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - npm ci
+
+  backend:build:
+    desc: Build backend for production
+    dir: "{{.BACKEND_DIR}}"
+    cmds:
+      - npm run build
+
+  health:
+    desc: Check PM2 and local app health endpoints
+    cmds:
+      - pm2 status
+      - curl -fsS http://127.0.0.1:3000/api/health
+      - curl -fsS http://127.0.0.1:1337/_health
+
   up:
-    desc: Run all services (production mode)
+    desc: Run all services with local Docker compose
     cmds:
       - docker compose up -d --build
 
   down:
-    desc: Stop all services
+    desc: Stop local Docker compose services
     cmds:
       - docker compose down
 
   restart:
-    desc: Restart all services
+    desc: Restart local Docker compose services
     cmds:
       - docker compose down
       - docker compose up -d --build
 
   prod:pull:
-    desc: Pull latest production images from GHCR
+    desc: Pull production Docker images from GHCR
     cmds:
       - docker compose -f docker-compose.prod.yml pull
 
   prod:up:
-    desc: Run production services using pre-built images (Zero Build)
+    desc: Run production Docker services using pre-built images
     cmds:
       - docker compose -f docker-compose.prod.yml up -d
 
   prod:update:
-    desc: Pull latest images and restart production services
+    desc: Pull latest Docker images and restart production services
     cmds:
       - docker compose -f docker-compose.prod.yml pull
       - docker compose -f docker-compose.prod.yml up -d
 
-
   logs:
-    desc: Show logs (all services)
+    desc: Show logs for all local Docker services
     cmds:
       - docker compose logs -f
 
   logs:backend:
-    desc: Logs backend (Strapi)
+    desc: Show backend logs from local Docker compose
     cmds:
       - docker compose logs -f backend
 
   logs:nginx:
-    desc: Logs nginx
+    desc: Show nginx logs from local Docker compose
     cmds:
       - docker compose logs -f nginx
 
   logs:db:
-    desc: Logs postgres
+    desc: Show postgres logs from local Docker compose
     cmds:
       - docker compose logs -f postgres
 
   build:
-    desc: Build all images
+    desc: Build all local Docker images
     cmds:
       - docker compose build --no-cache
 
   rebuild:
-    desc: Full rebuild (clean + build + up)
+    desc: Full local Docker rebuild
     cmds:
       - docker compose down -v
       - docker compose build --no-cache
       - docker compose up -d
 
   clean:
-    desc: Remove containers, volumes, unused images
+    desc: Remove local Docker containers, volumes, unused images
     cmds:
       - docker compose down -v
       - docker system prune -f
 
   shell:backend:
-    desc: Access backend container
+    desc: Open backend shell in local Docker compose
     cmds:
       - docker compose exec backend sh
 
   shell:nginx:
-    desc: Access nginx container
+    desc: Open nginx shell in local Docker compose
     cmds:
       - docker compose exec nginx sh
 
   db:
-    desc: Open postgres CLI
+    desc: Open postgres CLI in local Docker compose
     cmds:
       - docker compose exec postgres psql -U ${POSTGRES_USER:-strapi}
-
-  health:
-    desc: Check service health
-    cmds:
-      - docker compose ps
