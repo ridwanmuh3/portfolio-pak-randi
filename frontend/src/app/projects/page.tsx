@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Award, Rocket, ExternalLink, Calendar, Landmark } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
+import { sanitizeExternalHref } from "@/lib/safe-href";
 
 // Strapi client
 import { getFundings, getShowcaseProjects } from "@/lib/strapi";
@@ -17,7 +18,10 @@ export default async function ProjectsPage() {
   ]);
 
   const fundings = fundingsData ?? staticFundings;
-  const showcaseProjects = showcaseData ?? staticShowcaseProjects;
+  const showcaseProjects = (showcaseData ?? staticShowcaseProjects).map((project) => ({
+    ...project,
+    safeLink: sanitizeExternalHref(project.link),
+  }));
 
   return (
     <>
@@ -66,8 +70,8 @@ export default async function ProjectsPage() {
               <div className="mt-4 flex flex-wrap gap-2">
                 {(p.tech ?? []).map((t) => <span key={t} className="chip">{t}</span>)}
               </div>
-              {p.link && (
-                <a href={p.link} className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-600 hover:underline dark:text-emerald-400">
+              {p.safeLink && (
+                <a href={p.safeLink} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-600 hover:underline dark:text-emerald-400">
                   Learn more <ExternalLink className="h-3.5 w-3.5" />
                 </a>
               )}

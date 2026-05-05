@@ -58,4 +58,4 @@ USER strapi
 
 EXPOSE 1337
 ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["node", "dist/server.js"]
+CMD ["node", "node_modules/@strapi/strapi/bin/strapi.js", "start"]

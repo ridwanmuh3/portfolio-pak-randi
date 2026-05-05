@@ -2,7 +2,6 @@ import {
   PageHeaderSkeleton,
   SectionHeadingSkeleton,
   TimelineItemSkeleton,
-  CardSkeleton,
   Bone,
   ChipGroupSkeleton,
 } from '@/components/ui/Skeleton';

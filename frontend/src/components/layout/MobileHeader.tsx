@@ -4,7 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Menu } from "lucide-react";
 import { site } from "@/data/site";
-import { resolveStrapiMediaUrl } from "@/lib/strapi";
+import { sanitizeExternalHref } from "@/lib/safe-href";
+import { resolveStrapiMediaUrl } from "@/lib/strapi-media";
 import type { StrapiSiteConfig } from "@/types/strapi";
 
 interface MobileHeaderProps {
@@ -28,7 +29,8 @@ export default function MobileHeader({ siteConfig }: MobileHeaderProps = {}) {
   const initials = buildInitials(name);
 
   const thumb = siteConfig?.profileImage?.formats?.thumbnail;
-  const avatarUrl = resolveStrapiMediaUrl(thumb?.url ?? siteConfig?.profileImage);
+  const publicBaseUrl = sanitizeExternalHref(process.env.NEXT_PUBLIC_STRAPI_URL);
+  const avatarUrl = resolveStrapiMediaUrl(thumb?.url ?? siteConfig?.profileImage, publicBaseUrl);
 
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between border-b border-slate-200 bg-white/80 px-4 py-3 backdrop-blur lg:hidden dark:border-slate-800 dark:bg-slate-950/80">

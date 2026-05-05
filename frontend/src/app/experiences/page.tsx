@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { GraduationCap, Briefcase, Wrench, Trophy, MapPin, Download } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
+import { sanitizeExternalHref } from "@/lib/safe-href";
 
 // Strapi client
 import { getEducations, getExperiences, getSkillGroups, getAwards, getSiteConfig } from "@/lib/strapi";
 
 // Static fallbacks
 import { education as staticEducation, experiences as staticExperiences, skills as staticSkills, awards as staticAwards } from "@/data/experiences";
-import { site } from "@/data/site";
 
 export const metadata: Metadata = { title: "CV & Experiences" };
 
@@ -24,19 +24,21 @@ export default async function ExperiencesPage() {
   const experiences = experiencesData ?? staticExperiences;
   const skills = skillGroupsData ?? staticSkills;
   const awards = awardsData ?? staticAwards;
-  const cvUrl = siteConfig?.cvUrl ?? '#';
+  const cvUrl = sanitizeExternalHref(siteConfig?.cvUrl);
 
   return (
     <>
       <PageHeader eyebrow="Curriculum Vitae" title="CV & Experiences"
         description="An overview of my academic background, professional experience, technical skills and honors." />
 
-      <div className="mb-8 flex flex-wrap gap-3">
-        <a href={cvUrl}
-          className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-transform hover:-translate-y-0.5 hover:bg-emerald-700">
-          <Download className="h-4 w-4" /> Download CV (PDF)
-        </a>
-      </div>
+      {cvUrl && (
+        <div className="mb-8 flex flex-wrap gap-3">
+          <a href={cvUrl} target="_blank" rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-transform hover:-translate-y-0.5 hover:bg-emerald-700">
+            <Download className="h-4 w-4" /> Download CV (PDF)
+          </a>
+        </div>
+      )}
 
       {/* Experience Timeline */}
       <section aria-labelledby="exp-title" className="mb-12">

@@ -1,7 +1,6 @@
 import {
   PageHeaderSkeleton,
   SectionHeadingSkeleton,
-  CardSkeleton,
   Bone,
   ChipGroupSkeleton,
 } from '@/components/ui/Skeleton';

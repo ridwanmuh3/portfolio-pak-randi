@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { headers } from "next/headers";
 import Sidebar from "@/components/layout/Sidebar";
 import MobileHeader from "@/components/layout/MobileHeader";
 import Footer from "@/components/layout/Footer";
 import { getSiteConfig } from "@/lib/strapi";
+import { buildMetadataBase } from "@/lib/safe-href";
 import { site } from "@/data/site";
 import "./globals.css";
 
-const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 
 export async function generateMetadata(): Promise<Metadata> {
+  const requestHeaders = await headers();
   const siteConfig = await getSiteConfig();
   const name = siteConfig?.name ?? site.name;
   const title = siteConfig?.title ?? site.title;
@@ -18,7 +21,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: { default: `${name} — ${title}`, template: `%s — ${name}` },
     description: bio,
-    metadataBase: new URL("https://johndoe.example.com"),
+    metadataBase: buildMetadataBase(
+      requestHeaders.get("x-forwarded-proto"),
+      requestHeaders.get("x-forwarded-host"),
+      requestHeaders.get("host"),
+    ),
   };
 }
 
@@ -28,10 +35,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const siteConfig = await getSiteConfig();
 
   return (
-    <html lang="en" className={geist.variable} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         {/* External so CSP can stay strict: script-src 'self' */}
-        <script src="/theme-init.js" />
+        <script src="/theme-init.js" defer />
       </head>
       <body className="min-h-screen w-full font-sans antialiased">
         <Sidebar siteConfig={siteConfig} />

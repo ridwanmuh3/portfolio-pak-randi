@@ -21,13 +21,20 @@ import {
 } from "lucide-react";
 import { site, navLinks } from "@/data/site";
 import { LinkedinIcon, GithubIcon, ScholarIcon, OrcidIcon, ResearchGateIcon } from "./brand-icons";
-import { resolveStrapiMediaUrl } from "@/lib/strapi";
+import { resolveStrapiMediaUrl } from "@/lib/strapi-media";
+import { sanitizeExternalHref, sanitizeMailtoHref, sanitizeTelHref } from "@/lib/safe-href";
 import type { StrapiSiteConfig } from "@/types/strapi";
 
 interface SidebarProps {
   /** Live site config from Strapi. Falls back to static data when undefined. */
   siteConfig?: StrapiSiteConfig | null;
 }
+
+type SocialLink = {
+  href: string;
+  label: string;
+  Icon: typeof LinkedinIcon;
+};
 
 const iconMap: Record<string, typeof Home> = {
   "/": Home,
@@ -60,6 +67,8 @@ export default function Sidebar({ siteConfig }: SidebarProps = {}) {
   const githubUrl = siteConfig?.githubUrl ?? site.socials.github;
   const orcidUrl = siteConfig?.orcidUrl ?? site.socials.orcid;
   const researchGateUrl = siteConfig?.researchGateUrl ?? site.socials.researchGate;
+  const emailHref = sanitizeMailtoHref(email);
+  const phoneHref = sanitizeTelHref(phone);
 
   // Prefer a medium/small variant when available — it's ~150px wide, which is
   // what the 144×144 avatar slot actually renders. Falls back to the static
@@ -68,38 +77,33 @@ export default function Sidebar({ siteConfig }: SidebarProps = {}) {
     siteConfig?.profileImage?.formats?.small ??
     siteConfig?.profileImage?.formats?.medium ??
     siteConfig?.profileImage?.formats?.thumbnail;
+  const publicBaseUrl = sanitizeExternalHref(process.env.NEXT_PUBLIC_STRAPI_URL);
   const uploadedUrl =
-    resolveStrapiMediaUrl(uploadedVariant?.url ?? siteConfig?.profileImage);
+    resolveStrapiMediaUrl(uploadedVariant?.url ?? siteConfig?.profileImage, publicBaseUrl);
   const profileSrc = uploadedUrl ?? "/images/profile.webp";
   const profileAlt = siteConfig?.profileImage?.alternativeText ?? `${shortName} profile`;
 
   const socialLinks = [
-    { href: linkedinUrl, label: "LinkedIn", Icon: LinkedinIcon },
-    { href: scholarUrl, label: "Google Scholar", Icon: ScholarIcon },
-    { href: githubUrl, label: "GitHub", Icon: GithubIcon },
-    ...(orcidUrl ? [{ href: orcidUrl, label: "ORCID", Icon: OrcidIcon }] : []),
+    { href: sanitizeExternalHref(linkedinUrl), label: "LinkedIn", Icon: LinkedinIcon },
+    { href: sanitizeExternalHref(scholarUrl), label: "Google Scholar", Icon: ScholarIcon },
+    { href: sanitizeExternalHref(githubUrl), label: "GitHub", Icon: GithubIcon },
+    ...(orcidUrl ? [{ href: sanitizeExternalHref(orcidUrl), label: "ORCID", Icon: OrcidIcon }] : []),
     ...(researchGateUrl
-      ? [{ href: researchGateUrl, label: "ResearchGate", Icon: ResearchGateIcon }]
+      ? [{ href: sanitizeExternalHref(researchGateUrl), label: "ResearchGate", Icon: ResearchGateIcon }]
       : []),
-  ] as const;
+  ].filter((link): link is SocialLink => Boolean(link.href));
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(
+    () => typeof document !== "undefined" && document.documentElement.classList.contains("dark"),
+  );
   const activePath = normalizePath(pathname);
 
-  // Sync initial dark mode state.
   useEffect(() => {
-    setIsDark(document.documentElement.classList.contains("dark"));
-
     const handleToggle = () => setOpen((prev) => !prev);
     window.addEventListener("sidebar:toggle", handleToggle);
     return () => window.removeEventListener("sidebar:toggle", handleToggle);
   }, []);
-
-  // Close mobile drawer on navigation.
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
 
   // Lock body scroll while mobile drawer is open.
   useEffect(() => {
@@ -186,21 +190,30 @@ export default function Sidebar({ siteConfig }: SidebarProps = {}) {
 
           {/* Contact */}
           <div className="space-y-2.5 text-sm text-slate-600 dark:text-slate-300">
-            <a
-              href={`mailto:${email}`}
-              className="flex items-start gap-3 hover:text-emerald-600 dark:hover:text-emerald-400"
-            >
-              <Mail className="mt-0.5 h-4 w-4 shrink-0" />
-              <span className="break-all">{email}</span>
-            </a>
-            {phone && (
+            {emailHref && (
               <a
-                href={`tel:${phone.replace(/\s/g, "")}`}
+                href={emailHref}
                 className="flex items-start gap-3 hover:text-emerald-600 dark:hover:text-emerald-400"
               >
-                <Phone className="mt-0.5 h-4 w-4 shrink-0" />
-                <span>{phone}</span>
+                <Mail className="mt-0.5 h-4 w-4 shrink-0" />
+                <span className="break-all">{email}</span>
               </a>
+            )}
+            {phone && (
+              phoneHref ? (
+                <a
+                  href={phoneHref}
+                  className="flex items-start gap-3 hover:text-emerald-600 dark:hover:text-emerald-400"
+                >
+                  <Phone className="mt-0.5 h-4 w-4 shrink-0" />
+                  <span>{phone}</span>
+                </a>
+              ) : (
+                <div className="flex items-start gap-3">
+                  <Phone className="mt-0.5 h-4 w-4 shrink-0" />
+                  <span>{phone}</span>
+                </div>
+              )
             )}
             {location && (
               <div className="flex items-start gap-3">

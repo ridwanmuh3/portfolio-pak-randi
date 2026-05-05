@@ -1,7 +1,6 @@
 import {
   PageHeaderSkeleton,
   SectionHeadingSkeleton,
-  CardSkeleton,
   StatCardSkeleton,
   TableRowSkeleton,
   Bone,
