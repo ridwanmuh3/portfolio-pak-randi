@@ -9,7 +9,6 @@ import {
   Lightbulb,
   FileText,
   Users2,
-  BookOpen,
   Award,
   Moon,
   Sun,
@@ -42,7 +41,6 @@ const iconMap: Record<string, typeof Home> = {
   "/projects": Award,
   "/publications": FileText,
   "/services": Users2,
-  "/teaching": BookOpen,
 };
 
 const normalizePath = (path: string): string => {

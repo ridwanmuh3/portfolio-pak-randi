@@ -1,118 +1,150 @@
+export const personalInformation = [
+  { label: "Full Name", value: "Ir. Randi Rizal, Ph.D." },
+  { label: "Date of Birth", value: "Tasikmalaya, 27 October 1987" },
+  {
+    label: "Address",
+    value:
+      "Perum Arjamukti Kencana Raya Blok B6 No.4, Arjasari, Leuwisari, Tasikmalaya 46464, Jawa Barat, Indonesia.",
+  },
+  {
+    label: "Department",
+    value: "Informatics, Faculty of Engineering, Universitas Siliwangi, Indonesia",
+  },
+  { label: "WhatsApp", value: "+62 853 2013 2014" },
+  { label: "Email", value: "randirizal@unsil.ac.id" },
+];
+
 export const education = [
   {
-    degree: "Ph.D. in Computer Science",
-    institution: "Institut Teknologi Bandung",
-    location: "Bandung, Indonesia",
-    period: "2019 – 2023",
-    description:
-      "Dissertation: 'Hierarchical Deep Learning Approaches for Network Intrusion Detection in Imbalanced Environments.' Supervisor: Prof. Jane Smith.",
+    degree: "Doctor of Philosophy - PhD (S3)",
+    institution: "Universiti Teknikal Malaysia (UTeM)",
+    location: "Malaysia",
+    period: "2025",
+    description: "Information Security and Digital Forensics.",
   },
   {
-    degree: "M.Sc. in Informatics",
-    institution: "Universitas Gadjah Mada",
-    location: "Yogyakarta, Indonesia",
-    period: "2016 – 2018",
-    description:
-      "Thesis on anomaly detection in SCADA networks using ensemble learning. Graduated Cum Laude.",
+    degree: "Professional Engineer (Ir.)",
+    institution: "Universitas Hasanuddin",
+    location: "Indonesia",
+    period: "2025",
+    description: "Informatics.",
   },
   {
-    degree: "B.Sc. in Computer Science",
-    institution: "Siliwangi University",
-    location: "Tasikmalaya, Indonesia",
-    period: "2012 – 2016",
-    description: "Best graduate, Faculty of Engineering. Member of ACM student chapter.",
+    degree: "Master of Informatics (S2)",
+    institution: "Universitas Islam Indonesia (UII)",
+    location: "Indonesia",
+    period: "2018",
+    description: "",
+  },
+  {
+    degree: "Bachelor of Informatics (S1)",
+    institution: "Universitas Siliwangi",
+    location: "Indonesia",
+    period: "2011",
+    description: "",
   },
 ];
 
 export const experiences = [
   {
-    role: "Visiting Researcher",
-    organization: "Korea Advanced Institute of Science and Technology (KAIST)",
-    location: "Daejeon, South Korea",
-    period: "Jan 2026 – Present",
-    description:
-      "Short-term visiting position collaborating with the Cyber Security Research Center on LLM-assisted vulnerability discovery for embedded firmware images.",
-  },
-  {
-    role: "Assistant Professor",
-    organization: "Siliwangi University",
+    role: "Lecturer",
+    organization: "Department of Informatics, Universitas Siliwangi",
     location: "Tasikmalaya, Indonesia",
-    period: "2024 – Present",
-    description:
-      "Teaching undergraduate and graduate courses in AI, cybersecurity, and digital forensics. Leading the Secure AI Research Group (SAIRG) and supervising 12 thesis students.",
+    period: "2022 - Present",
+    description: "",
   },
   {
-    role: "Postdoctoral Researcher",
-    organization: "National Cheng Kung University",
-    location: "Tainan, Taiwan",
-    period: "2023 – 2024",
-    description:
-      "Worked on adversarial robustness of intrusion detection models and privacy-preserving federated learning for IoT security. Co-authored 4 publications.",
+    role: "Editor-in-Chief",
+    organization: "JICO - International Journal of Informatics and Computing",
+    location: "Indonesia",
+    period: "2025 - Present",
+    description: "",
+  },
+  {
+    role: "Editor-in-Chief",
+    organization: "INNOVATICS - Journal of Innovation in Research of Informatics",
+    location: "Indonesia",
+    period: "2025 - Present",
+    description: "",
+  },
+  {
+    role: "CEO",
+    organization: "Sekolah Programmer YuCoding",
+    location: "Indonesia",
+    period: "2019 - Present",
+    description: "Digital coding education platform.",
+  },
+  {
+    role: "Director",
+    organization: "Publisher Meta Pustaka Intelektual",
+    location: "Indonesia",
+    period: "2025 - Present",
+    description: "Academic book publishing (ISBN).",
+  },
+  {
+    role: "Director",
+    organization: "Alphabet Consultant IT",
+    location: "Indonesia",
+    period: "2016 - Present",
+    description: "IT and consulting services.",
   },
   {
     role: "Lecturer",
-    organization: "Siliwangi University",
+    organization: "Universitas Cipasung",
     location: "Tasikmalaya, Indonesia",
-    period: "2018 – 2019",
-    description:
-      "Taught courses on computer networks, operating systems, and information security. Coordinated the undergraduate capstone project.",
+    period: "2021 - 2022",
+    description: "",
   },
   {
-    role: "Security Engineer (Part-time)",
-    organization: "PT Data Aman Nusantara",
-    location: "Jakarta, Indonesia",
-    period: "2016 – 2018",
-    description:
-      "Implemented SIEM rules, performed vulnerability assessments and contributed to incident response playbooks for enterprise clients.",
+    role: "Lecturer",
+    organization: "Universitas Perjuangan",
+    location: "Tasikmalaya, Indonesia",
+    period: "2019 - 2021",
+    description: "",
+  },
+  {
+    role: "Head of Computer Lab.",
+    organization: "Al-Furqon Boarding School",
+    location: "Indonesia",
+    period: "2011 - 2018",
+    description: "",
   },
 ];
 
 export const skills = [
   {
-    category: "Research",
+    category: "Competencies",
     items: [
-      "Machine Learning",
-      "Deep Learning",
-      "Intrusion Detection",
-      "Adversarial ML",
+      "Information Security",
+      "Cryptography",
       "Digital Forensics",
-      "LLM Security",
+      "Ethical Hacking",
     ],
   },
-  { category: "Languages", items: ["Python", "Go", "TypeScript", "C/C++", "Rust", "SQL"] },
-  {
-    category: "Tools",
-    items: ["PyTorch", "TensorFlow", "Scikit-learn", "Wireshark", "Snort", "Docker", "Kubernetes"],
-  },
-  {
-    category: "Soft Skills",
-    items: [
-      "Technical Writing",
-      "Public Speaking",
-      "Student Mentoring",
-      "Project Management",
-      "Grant Writing",
-    ],
-  },
+];
+
+export const memberships = [
+  "PII Kab. Tasikmalaya - Indonesian Engineers Association, Member, 2024",
+  "APTIKOM - Association of Informatics Higher Education, Member, 2020",
+  "AFDI - Indonesian Digital Forensics Association, Member, 2024",
+  "IAENG - International Association of Engineers, Member, 2024",
+  "SDIWC - Society of Digital Information & Wireless Comm., Member, 2024",
 ];
 
 export const awards = [
   {
     title: "Best Paper Award",
-    issuer:
-      "International Conference on Advancement in Data Science, E-learning and Information System (ICADEIS) - Bali, Indonesia",
+    issuer: "ICADEIS - Bali, Indonesia",
     year: "2025",
   },
   {
     title: "Best Paper Award",
-    issuer:
-      "International Conference on Information and Communication Technology (ICoICT) - Bandung, Indonesia",
+    issuer: "ICoICT - Bandung, Indonesia",
     year: "2024",
   },
   {
     title: "Best Paper Award",
-    issuer:
-      "International Conference on Advancement in Data Science, E-learning and Information System (ICADEIS) - Türkiye",
+    issuer: "ICADEIS - Turkiye",
     year: "2022",
   },
 ];

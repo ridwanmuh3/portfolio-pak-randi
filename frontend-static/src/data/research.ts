@@ -2,102 +2,105 @@ export const researchProjects = [
   {
     title:
       "Deep Learning AI Approach for Expert System Screening of Neonatal Sepsis Disease Based on Android with Health Data Security",
-    status: "Completed" as const,
+    status: "Ongoing" as const,
     period: "2026",
-    // description:
-    // "Designing a multi-stage pipeline that combines coarse-grained anomaly detection with fine-grained classification to handle highly imbalanced attack categories in modern network traffic.",
-    tags: ["Information Security", "Deep Learning"],
+    grant: "Internal University Collaborative Research Grant (PKPT)",
+    tags: ["AI", "Health Data Security", "Android"],
   },
   {
     title:
-      "Secure Logging Architecture Based on Secure Signature for Ensuring Log Integrity in Digital Forensic Investigation.",
-    status: "Completed" as const,
+      "Secure Logging Architecture Based on Secure Signature for Ensuring Log Integrity in Digital Forensic Investigation",
+    status: "Ongoing" as const,
     period: "2026",
-    // description:
-    //   "Investigating perturbation-based evasion attacks on deep-learning-based packet classifiers and proposing certified defenses using randomized smoothing.",
-    tags: ["Secure Log", "Digital Forensics", "Log Integrity"],
+    grant: "University Excellence Research Grant (PUU)",
+    tags: ["Secure Logging", "Digital Forensics", "Log Integrity"],
   },
   {
     title:
       "Smart QR Secure Signature Model Based on Time-Lock Encryption for Enhancing Digital Document Integrity and Validity",
-    status: "Completed" as const,
+    status: "Ongoing" as const,
     period: "2026",
-    // description:
-    //   "Developed a privacy-preserving federated learning framework for collaborative threat intelligence across heterogeneous IoT gateways without sharing raw traffic.",
-    tags: ["Cryptography", "Information Security", "Secure QR"],
+    grant: "Capacity Development Research Grant (PPKAP)",
+    tags: ["Cryptography", "Secure Signature", "QR"],
   },
   {
     title:
       "Intelligent Web-Based Security System with VERITAS Model Integration for Deepfake Detection",
     status: "Completed" as const,
     period: "2025",
-    // description:
-    //   "Built an explainable malware classifier using graph neural networks over API-call graphs with attention-based attribution for analyst support.",
-    tags: ["Anomaly Detection", "Information Security", "Deepfake"],
+    grant: "University Excellence Research Grant (PUU)",
+    tags: ["Web Security", "Deepfake Detection", "AI"],
   },
   {
     title: "Intelligent Malware Anomaly Detection with Transformer Model",
     status: "Completed" as const,
     period: "2025",
-    // description:
-    //   "Built an explainable malware classifier using graph neural networks over API-call graphs with attention-based attribution for analyst support.",
-    tags: ["Anomaly Detection", "Malware Analysis", "Artificial Intelligence"],
+    grant: "Junior Lecturer Research Grant (PDP)",
+    tags: ["Malware Detection", "Transformer", "Cybersecurity"],
   },
   {
-    title: "Development of Deep Learning Model to Improve IoT Forensic Investigation Framework",
+    title:
+      "Development of Deep Learning Model to Improve IoT Forensic Investigation Framework",
     status: "Completed" as const,
     period: "2025",
-    // description:
-    //   "Built an explainable malware classifier using graph neural networks over API-call graphs with attention-based attribution for analyst support.",
-    tags: ["Digital Forensics", "Internet of Things (IoT)", "Deep Learning"],
+    grant: "National Competitive Research Grant (PFR)",
+    tags: ["IoT Forensics", "Deep Learning", "Forensic Readiness"],
   },
   {
     title:
       "Security Assessment of Government IT Infrastructure in Tasikmalaya Regency Based on KAMI Index v5.0",
     status: "Completed" as const,
     period: "2024",
-    // description:
-    //   "Built an explainable malware classifier using graph neural networks over API-call graphs with attention-based attribution for analyst support.",
-    tags: ["IT Governance", "Information Security"],
+    grant: "University Excellence Research Grant (PUU)",
+    tags: ["Security Assessment", "IT Governance", "KAMI Index"],
   },
   {
-    title: "Optimization of Eco-Maps with Microservice Architecture for Green Campus Support",
+    title:
+      "Optimization of Eco-Maps with Microservice Architecture for Green Campus Support",
     status: "Completed" as const,
     period: "2024",
-    // description:
-    //   "Built an explainable malware classifier using graph neural networks over API-call graphs with attention-based attribution for analyst support.",
-    tags: ["Microservices", "Distributed System", "Green Computing"],
+    grant: "Capacity Development Research Grant (PPKAP)",
+    tags: ["Eco-Maps", "Microservices", "Green Campus"],
   },
   {
     title:
       "Development of Forensic Readiness Framework for IoT Device Investigation Based on Deep Learning",
     status: "Completed" as const,
     period: "2024",
-    // description:
-    //   "Built an explainable malware classifier using graph neural networks over API-call graphs with attention-based attribution for analyst support.",
-    tags: ["Digital Forensics", "Internet of Things (IoT)", "Deep Learning"],
+    grant: "Competency Enhancement Research Grant (PPKOM)",
+    tags: ["IoT", "Deep Learning", "Digital Forensics"],
   },
 ];
 
-export const collaborators = [
+export const publicationPreview = [
   {
-    name: "Dr. Ir. Nur Widiyasono, S.Kom., M.Kom., CEH., CHFI., MCE., CITAP",
-    picture: "/images/collaborator-1.webp",
-    affiliation: "Siliwangi University",
+    title:
+      "A Deep Learning Approach for Enhancing Internet of Things Forensic Investigation Using DANets",
+    venue: "CMC-Q1",
+    year: "2026",
   },
   {
-    name: "Ir. Alam Rahmatulloh, S.T., M.T., MCE., IPM",
-    picture: "/images/collaborator-2.webp",
-    affiliation: "Siliwangi University",
+    title:
+      "GO-X: Gain Ratio and Optuna Driven Optimization for eXtreme Gradient Boosting (XGBoost) in Malware Detection",
+    venue: "IJICIC-Q2",
+    year: "2026",
   },
   {
-    name: "Rohmat Gunawan, S.T., M.T., MCE",
-    picture: "/images/collaborator-3.webp",
-    affiliation: "Siliwangi University",
+    title:
+      "MAnTra: A Transformer-Based Approach for Malware Anomaly Detection in Network Traffic Classification",
+    venue: "JUTIF-S2",
+    year: "2025",
   },
   {
-    name: "Assoc. Prof. Ts. Dr. Siti Rahayu Selamat",
-    picture: "/images/collaborator-4.webp",
-    affiliation: "Universiti Teknikal Malaysia Melaka",
+    title:
+      "A Transform-Domain Robust Watermarking Model Using Discrete Wavelet Transform for Image Copyright Security",
+    venue: "JICO",
+    year: "2025",
+  },
+  {
+    title:
+      "AResNet Model Using Deep Learning for Enhancing the IoT Forensic Readiness Framework",
+    venue: "IJIES-Q2",
+    year: "2024",
   },
 ];

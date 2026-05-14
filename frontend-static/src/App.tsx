@@ -9,7 +9,6 @@ import ProjectsPage from '@/pages/ProjectsPage';
 import PublicationsPage from '@/pages/PublicationsPage';
 import ResearchPage from '@/pages/ResearchPage';
 import ServicesPage from '@/pages/ServicesPage';
-import TeachingPage from '@/pages/TeachingPage';
 
 export default function App() {
   return (
@@ -25,7 +24,6 @@ export default function App() {
             <Route path="/publications" element={<PublicationsPage />} />
             <Route path="/research" element={<ResearchPage />} />
             <Route path="/services" element={<ServicesPage />} />
-            <Route path="/teaching" element={<TeachingPage />} />
           </Routes>
           <Footer />
         </div>

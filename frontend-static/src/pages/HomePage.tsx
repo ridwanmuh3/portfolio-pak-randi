@@ -50,12 +50,14 @@ export default function HomePage() {
             ))}
           </div>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link
-              to="/experiences"
+            <a
+              href="/cv.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-transform hover:-translate-y-0.5 hover:bg-emerald-700"
             >
-              View CV <ArrowRight className="h-4 w-4" />
-            </Link>
+              Open CV PDF <ArrowRight className="h-4 w-4" />
+            </a>
             <Link
               to="/publications"
               className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:border-emerald-500 hover:text-emerald-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-emerald-400 dark:hover:text-emerald-400"
